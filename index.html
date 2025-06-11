@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sumit Tamgale</title>
+    <title>Bio | Sumit Tamgale</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +60,7 @@
     <!-- Name in Top Left Corner -->
     <div class="absolute top-4 left-4 md:top-8 md:left-8 text-left p-4 z-10">
         <div class="hero-text">
-            <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-orbitron leading-tight">  sumit</h1>
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-orbitron leading-tight">sumit</h1>
             <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-orbitron leading-tight">tamgale</h1>
         </div>
     </div>
@@ -73,18 +73,24 @@
     <div id="about-section" class="content-panel hidden absolute top-1/2 left-1/2 w-11/12 md:w-1/2 max-w-2xl p-8 rounded-lg">
         <span class="close-btn absolute top-4 right-6 text-2xl cursor-pointer hover:text-white">&times;</span>
         <h2 class="font-orbitron text-2xl text-white mb-4">About</h2>
-        <p class="text-gray-300">About section</p>
+        <p class="text-gray-300">Placeholder for about section. This is where information about Sumit Tamgale will be materialized from the digital ether. Interests include artificial intelligence, astrophysics, and creating immersive digital experiences.</p>
     </div>
     <div id="connect-section" class="content-panel hidden absolute top-1/2 left-1/2 w-11/12 md:w-1/2 max-w-2xl p-8 rounded-lg">
         <span class="close-btn absolute top-4 right-6 text-2xl cursor-pointer hover:text-white">&times;</span>
         <h2 class="font-orbitron text-2xl text-white mb-4">Connect</h2>
-        <p class="text-gray-300">Connect section</p>
+        <p class="text-gray-300">Placeholder for connection links. Establishing a quantum link... You will be able to find Sumit on platforms like GitHub, LinkedIn, and across the decentralized web.</p>
     </div>
-    
+    <div id="blog-section" class="content-panel hidden absolute top-1/2 left-1/2 w-11/12 md:w-1/2 max-w-2xl p-8 rounded-lg">
+        <span class="close-btn absolute top-4 right-6 text-2xl cursor-pointer hover:text-white">&times;</span>
+        <h2 class="font-orbitron text-2xl text-white mb-4">Blog</h2>
+        <p class="text-gray-300">Transmissions from the void. This section will host thoughts, research, and explorations into the frontiers of technology and space. Stand by for incoming data streams.</p>
+    </div>
+
     <!-- Menu -->
     <nav class="absolute bottom-8 right-8 text-right z-10">
         <a class="menu-link block font-orbitron uppercase text-gray-400 cursor-pointer text-sm tracking-wider" data-section="about">About</a>
         <a class="menu-link block font-orbitron uppercase text-gray-400 cursor-pointer mt-2 text-sm tracking-wider" data-section="connect">Connect</a>
+        <a class="menu-link block font-orbitron uppercase text-gray-400 cursor-pointer mt-2 text-sm tracking-wider" data-section="blog">Blog</a>
     </nav>
 
 
@@ -101,6 +107,10 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             camera.position.z = 50;
+
+            // --- Constants ---
+            const worldBounds = 100;
+            const eventHorizonRadius = 2;
 
             // --- Starfield Particle System Setup ---
             const particleCount = 10000;
@@ -120,7 +130,7 @@
             // --- Black Hole Setup ---
             const blackHoleGroup = new THREE.Group();
             scene.add(blackHoleGroup);
-            const blackHoleGeometry = new THREE.SphereGeometry(2, 64, 64);
+            const blackHoleGeometry = new THREE.SphereGeometry(eventHorizonRadius, 64, 64);
             const blackHoleMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
             const blackHoleMesh = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             blackHoleGroup.add(blackHoleMesh);
@@ -138,7 +148,7 @@
             blackHoleGroup.add(accretionDisk);
 
             // --- Spaceship Setup ---
-            const shipCount = 100; const shipVelocities = []; const worldBounds = 100;
+            const shipCount = 100; const shipVelocities = []; 
             const fighterGeometry = new THREE.ConeGeometry(0.1, 0.5, 4); const fighterMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
             const fighters = new THREE.InstancedMesh(fighterGeometry, fighterMaterial, shipCount / 2); scene.add(fighters);
             const battleshipGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.8); const battleshipMaterial = new THREE.MeshBasicMaterial({ color: 0x999999 });
@@ -157,11 +167,9 @@
             const bhInitialPos = new THREE.Vector3(0, 0, 0);
             const bhCornerPos = new THREE.Vector3(30, 15, 0);
             const bhTargetPos = new THREE.Vector3(0, 0, 0);
-            
             const bhInitialRot = new THREE.Euler(0.8, 0, 0);
             const bhCornerRot = new THREE.Euler(0.2, 0, 0);
             const bhTargetRot = new THREE.Euler().copy(bhInitialRot);
-
             const bhInitialScale = new THREE.Vector3(1, 1, 1);
             const bhCornerScale = new THREE.Vector3(0.5, 0.5, 0.5);
             const bhTargetScale = new THREE.Vector3(1, 1, 1);
@@ -173,13 +181,12 @@
 
             function openPanel(sectionId) {
                 contentPanels.forEach(p => { 
-                    p.classList.add('hidden');
-                    p.classList.remove('visible');
+                    p.classList.add('hidden'); p.classList.remove('visible');
                 });
                 const panel = document.getElementById(`${sectionId}-section`);
                 if (panel) {
                     panel.classList.remove('hidden');
-                    setTimeout(() => panel.classList.add('visible'), 10); // for transition
+                    setTimeout(() => panel.classList.add('visible'), 10);
                     bhTargetPos.copy(bhCornerPos);
                     bhTargetRot.set(bhCornerRot.x, bhTargetRot.y, bhCornerRot.z);
                     bhTargetScale.copy(bhCornerScale);
@@ -189,7 +196,6 @@
             function closePanels() {
                  contentPanels.forEach(p => {
                     p.classList.remove('visible');
-                    // wait for transition to finish before hiding
                     setTimeout(() => p.classList.add('hidden'), 500);
                 });
                 bhTargetPos.copy(bhInitialPos);
@@ -197,15 +203,25 @@
                 bhTargetScale.copy(bhInitialScale);
             }
 
+            const handleMenuInteraction = (e) => {
+                e.preventDefault();
+                const sectionId = e.currentTarget.getAttribute('data-section');
+                openPanel(sectionId);
+            };
+
+            const handleCloseInteraction = (e) => {
+                e.preventDefault();
+                closePanels();
+            }
+
             menuLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const sectionId = e.target.getAttribute('data-section');
-                    openPanel(sectionId);
-                });
+                link.addEventListener('click', handleMenuInteraction);
+                link.addEventListener('touchstart', handleMenuInteraction, { passive: false });
             });
 
             closeBtns.forEach(btn => {
-                btn.addEventListener('click', closePanels);
+                btn.addEventListener('click', handleCloseInteraction);
+                btn.addEventListener('touchstart', handleCloseInteraction, { passive: false });
             });
 
 
@@ -214,9 +230,9 @@
             window.addEventListener('mousemove', (event) => { mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1; });
             window.addEventListener('mousedown', () => { isRepelling = true; }); window.addEventListener('mouseup', () => { isRepelling = false; });
             function updateMouseFromTouch(touch) { mouse.x = (touch.clientX / window.innerWidth) * 2 - 1; mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1; }
-            window.addEventListener('touchstart', (event) => { event.preventDefault(); isRepelling = true; updateMouseFromTouch(event.touches[0]); }, { passive: false });
-            window.addEventListener('touchend', (event) => { event.preventDefault(); isRepelling = false; });
-            window.addEventListener('touchmove', (event) => { event.preventDefault(); updateMouseFromTouch(event.touches[0]); }, { passive: false });
+            window.addEventListener('touchstart', (event) => { isRepelling = true; updateMouseFromTouch(event.touches[0]); }, { passive: false });
+            window.addEventListener('touchend', (event) => { isRepelling = false; });
+            window.addEventListener('touchmove', (event) => { updateMouseFromTouch(event.touches[0]); }, { passive: false });
 
             // --- Animation Loop ---
             const clock = new THREE.Clock();
@@ -226,7 +242,6 @@
                 // --- Animate Black Hole ---
                 blackHoleGroup.position.lerp(bhTargetPos, 0.05);
                 blackHoleGroup.scale.lerp(bhTargetScale, 0.05);
-                // Preserve the continuous Y rotation
                 bhTargetRot.y = blackHoleGroup.rotation.y + 0.001;
                 const targetQuat = new THREE.Quaternion().setFromEuler(bhTargetRot);
                 blackHoleGroup.quaternion.slerp(targetQuat, 0.05);
@@ -236,8 +251,29 @@
                 interactionPoint.copy(camera.position).add(dir.multiplyScalar(distance));
                 const posArray = particlesGeometry.attributes.position.array; const velArray = particleVelocities;
                 for (let i = 0; i < particleCount; i++) {
-                    const i3 = i * 3; const particlePosition = new THREE.Vector3(posArray[i3], posArray[i3 + 1], posArray[i3 + 2]); const direction = new THREE.Vector3().subVectors(interactionPoint, particlePosition); const distSq = direction.lengthSq(); const interactionRadiusSq = 400;
-                    if (distSq < interactionRadiusSq) { const force = (isRepelling ? -1 : 1) * (1 - Math.sqrt(distSq) / Math.sqrt(interactionRadiusSq)); velArray[i3] += direction.x * force * 0.1; velArray[i3 + 1] += direction.y * force * 0.1; }
+                    const i3 = i * 3; 
+                    const particlePosition = new THREE.Vector3(posArray[i3], posArray[i3 + 1], posArray[i3 + 2]); 
+                    const directionToMouse = new THREE.Vector3().subVectors(interactionPoint, particlePosition); 
+                    const distSqMouse = directionToMouse.lengthSq(); 
+                    const interactionRadiusSq = 400;
+                    if (distSqMouse < interactionRadiusSq) { const force = (isRepelling ? -1 : 1) * (1 - Math.sqrt(distSqMouse) / Math.sqrt(interactionRadiusSq)); velArray[i3] += directionToMouse.x * force * 0.1; velArray[i3 + 1] += directionToMouse.y * force * 0.1; }
+                    
+                    // --- Black Hole Gravity on Stars ---
+                    const directionToBH = new THREE.Vector3().subVectors(blackHoleGroup.position, particlePosition);
+                    const distSqBH = directionToBH.lengthSq();
+                    if(distSqBH < 400) {
+                        const gravity = 10 / distSqBH;
+                        velArray[i3] += directionToBH.x * gravity;
+                        velArray[i3+1] += directionToBH.y * gravity;
+                        velArray[i3+2] += directionToBH.z * gravity;
+                    }
+                    if (distSqBH < eventHorizonRadius * eventHorizonRadius) {
+                        posArray[i3] = (Math.random() - 0.5) * worldBounds * 2;
+                        posArray[i3+1] = (Math.random() - 0.5) * worldBounds * 2;
+                        posArray[i3+2] = (Math.random() - 0.5) * worldBounds * 2;
+                        velArray[i3] = velArray[i3+1] = velArray[i3+2] = 0;
+                    }
+
                     velArray[i3] *= 0.97; velArray[i3 + 1] *= 0.97; velArray[i3 + 2] *= 0.97;
                     posArray[i3] += velArray[i3]; posArray[i3 + 1] += velArray[i3 + 1]; posArray[i3 + 2] += velArray[i3 + 2];
                 }
@@ -251,14 +287,33 @@
                 }
                 diskGeometry.attributes.position.needsUpdate = true;
                 
-                // --- Ship Movement ---
+                // --- Ship Movement & BH Gravity ---
                 const matrix = new THREE.Matrix4();
                 for (let i = 0; i < shipCount; i++) {
                     const mesh = i < shipCount / 2 ? fighters : battleships; const instanceId = i < shipCount / 2 ? i : i - (shipCount / 2);
-                    mesh.getMatrixAt(instanceId, matrix); dummy.matrix.copy(matrix); dummy.position.add(shipVelocities[i]);
-                    if (dummy.position.x > worldBounds) dummy.position.x = -worldBounds; if (dummy.position.x < -worldBounds) dummy.position.x = worldBounds;
-                    if (dummy.position.y > worldBounds) dummy.position.y = -worldBounds; if (dummy.position.y < -worldBounds) dummy.position.y = worldBounds;
-                    if (dummy.position.z > worldBounds) dummy.position.z = -worldBounds; if (dummy.position.z < -worldBounds) dummy.position.z = worldBounds;
+                    mesh.getMatrixAt(instanceId, matrix); dummy.matrix.copy(matrix);
+                    
+                    // --- Black Hole Gravity on Ships ---
+                    const shipPosition = new THREE.Vector3().setFromMatrixPosition(dummy.matrix);
+                    const dirToBH = new THREE.Vector3().subVectors(blackHoleGroup.position, shipPosition);
+                    const dSqBH = dirToBH.lengthSq();
+                    if(dSqBH < 900) { // Larger influence radius for ships
+                        const gravity = 20 / dSqBH;
+                        shipVelocities[i].x += dirToBH.x * gravity;
+                        shipVelocities[i].y += dirToBH.y * gravity;
+                        shipVelocities[i].z += dirToBH.z * gravity;
+                    }
+
+                    dummy.position.add(shipVelocities[i]);
+                    
+                    if (dSqBH < eventHorizonRadius * eventHorizonRadius) {
+                        dummy.position.set( (Math.random() - 0.5) * worldBounds * 2, (Math.random() - 0.5) * worldBounds * 2, (Math.random() - 0.5) * worldBounds * 2 );
+                        shipVelocities[i].set((Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01);
+                    } else { // Wrap ships around the screen if not consumed
+                        if (dummy.position.x > worldBounds) dummy.position.x = -worldBounds; if (dummy.position.x < -worldBounds) dummy.position.x = worldBounds;
+                        if (dummy.position.y > worldBounds) dummy.position.y = -worldBounds; if (dummy.position.y < -worldBounds) dummy.position.y = worldBounds;
+                        if (dummy.position.z > worldBounds) dummy.position.z = -worldBounds; if (dummy.position.z < -worldBounds) dummy.position.z = worldBounds;
+                    }
                     dummy.updateMatrix(); mesh.setMatrixAt(instanceId, dummy.matrix);
                 }
                 fighters.instanceMatrix.needsUpdate = true; battleships.instanceMatrix.needsUpdate = true;
