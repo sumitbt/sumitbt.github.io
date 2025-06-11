@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio | Sumit Tamgale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000005;
+            color: #e0e0e0;
+            overflow: hidden; /* Prevent scrollbars */
+            cursor: default; /* Use default system cursor */
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .hero-text {
+            text-shadow: 0 0 15px rgba(138, 138, 255, 0.4);
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Name in Top Left Corner -->
+    <div class="absolute top-4 left-4 md:top-8 md:left-8 text-left p-4 z-10">
+        <div class="hero-text">
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-orbitron leading-tight">sumit</h1>
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-orbitron leading-tight">tamgale</h1>
+        </div>
+    </div>
+    
+    <!-- This div is now a placeholder, the black hole is rendered in WebGL -->
+    <div class="relative w-full h-screen flex flex-col items-center justify-center text-center p-4">
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        window.onload = function() {
+            // --- Basic Scene Setup ---
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('bg-canvas'),
+                antialias: true,
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            camera.position.z = 50;
+
+            // --- Starfield Particle System Setup ---
+            const particleCount = 10000;
+            const starPositions = new Float32Array(particleCount * 3);
+            const particleVelocities = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                starPositions[i3] = (Math.random() - 0.5) * 200; // x
+                starPositions[i3 + 1] = (Math.random() - 0.5) * 200; // y
+                starPositions[i3 + 2] = (Math.random() - 0.5) * 200; // z
+                
+                particleVelocities[i3] = (Math.random() - 0.5) * 0.1;
+                particleVelocities[i3 + 1] = (Math.random() - 0.5) * 0.1;
+                particleVelocities[i3 + 2] = (Math.random() - 0.5) * 0.1;
+            }
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            const particlesMaterial = new THREE.PointsMaterial({
+                color: 0x8a8aff, size: 0.1, transparent: true,
+                blending: THREE.AdditiveBlending, depthWrite: false,
+            });
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+
+            // --- Black Hole Setup ---
+            const blackHoleGroup = new THREE.Group();
+            scene.add(blackHoleGroup);
+
+            // Central sphere (the event horizon)
+            const blackHoleGeometry = new THREE.SphereGeometry(2, 64, 64);
+            const blackHoleMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const blackHoleMesh = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
+            blackHoleGroup.add(blackHoleMesh);
+
+            // Accretion Disk
+            const diskParticleCount = 2000;
+            const diskPositions = new Float32Array(diskParticleCount * 3);
+            const diskData = []; // To store angle, radius, speed
+            const maxRadius = 10;
+            const minRadius = 2.5;
+
+            for (let i = 0; i < diskParticleCount; i++) {
+                const radius = Math.random() * (maxRadius - minRadius) + minRadius;
+                const angle = Math.random() * Math.PI * 2;
+                const i3 = i * 3;
+                diskPositions[i3] = Math.cos(angle) * radius;
+                diskPositions[i3+1] = (Math.random() - 0.5) * 0.5; // slight vertical variation
+                diskPositions[i3+2] = Math.sin(angle) * radius;
+
+                diskData.push({ 
+                    angle, 
+                    radius,
+                    speed: (0.5 / radius) * 0.1 + 0.005
+                });
+            }
+            const diskGeometry = new THREE.BufferGeometry();
+            diskGeometry.setAttribute('position', new THREE.BufferAttribute(diskPositions, 3));
+            const diskMaterial = new THREE.PointsMaterial({
+                color: 0xffa500, size: 0.08, transparent: true,
+                blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.7
+            });
+            const accretionDisk = new THREE.Points(diskGeometry, diskMaterial);
+            blackHoleGroup.add(accretionDisk);
+
+            // --- Spaceship Setup ---
+            const shipCount = 100;
+            const shipVelocities = [];
+            const worldBounds = 100;
+
+            const fighterGeometry = new THREE.ConeGeometry(0.1, 0.5, 4);
+            const fighterMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const fighters = new THREE.InstancedMesh(fighterGeometry, fighterMaterial, shipCount / 2);
+            scene.add(fighters);
+
+            const battleshipGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.8);
+            const battleshipMaterial = new THREE.MeshBasicMaterial({ color: 0x999999 });
+            const battleships = new THREE.InstancedMesh(battleshipGeometry, battleshipMaterial, shipCount / 2);
+            scene.add(battleships);
+
+            const dummy = new THREE.Object3D();
+            for (let i = 0; i < shipCount; i++) {
+                dummy.position.set(
+                    (Math.random() - 0.5) * worldBounds * 2, (Math.random() - 0.5) * worldBounds * 2,
+                    (Math.random() - 0.5) * worldBounds * 2
+                );
+                dummy.lookAt(dummy.position.x + (Math.random() - 0.5), dummy.position.y + (Math.random() - 0.5), dummy.position.z + (Math.random() - 0.5));
+                dummy.updateMatrix();
+
+                const velocity = new THREE.Vector3((Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01);
+                if (i < shipCount / 2) {
+                    fighters.setMatrixAt(i, dummy.matrix);
+                    velocity.multiplyScalar(2);
+                } else {
+                    battleships.setMatrixAt(i - (shipCount / 2), dummy.matrix);
+                }
+                shipVelocities.push(velocity);
+            }
+            fighters.instanceMatrix.needsUpdate = true;
+            battleships.instanceMatrix.needsUpdate = true;
+
+            // --- Mouse Interaction ---
+            const mouse = new THREE.Vector2();
+            const interactionPoint = new THREE.Vector3();
+            let isRepelling = false;
+
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+            window.addEventListener('mousedown', () => { isRepelling = true; });
+            window.addEventListener('mouseup', () => { isRepelling = false; });
+            function updateMouseFromTouch(touch) {
+                mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+            }
+            window.addEventListener('touchstart', (event) => { event.preventDefault(); isRepelling = true; updateMouseFromTouch(event.touches[0]); }, { passive: false });
+            window.addEventListener('touchend', (event) => { event.preventDefault(); isRepelling = false; });
+            window.addEventListener('touchmove', (event) => { event.preventDefault(); updateMouseFromTouch(event.touches[0]); }, { passive: false });
+
+            // --- Animation Loop ---
+            const clock = new THREE.Clock();
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // --- Starfield Physics ---
+                const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+                vector.unproject(camera);
+                const dir = vector.sub(camera.position).normalize();
+                const distance = -camera.position.z / dir.z;
+                interactionPoint.copy(camera.position).add(dir.multiplyScalar(distance));
+                
+                const posArray = particlesGeometry.attributes.position.array;
+                const velArray = particleVelocities;
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+                    const particlePosition = new THREE.Vector3(posArray[i3], posArray[i3 + 1], posArray[i3 + 2]);
+                    const direction = new THREE.Vector3().subVectors(interactionPoint, particlePosition);
+                    const distSq = direction.lengthSq();
+                    const interactionRadiusSq = 400;
+                    if (distSq < interactionRadiusSq) {
+                        const force = (isRepelling ? -1 : 1) * (1 - Math.sqrt(distSq) / Math.sqrt(interactionRadiusSq));
+                        velArray[i3] += direction.x * force * 0.1;
+                        velArray[i3 + 1] += direction.y * force * 0.1;
+                    }
+                    velArray[i3] *= 0.97; velArray[i3 + 1] *= 0.97; velArray[i3 + 2] *= 0.97;
+                    posArray[i3] += velArray[i3]; posArray[i3 + 1] += velArray[i3 + 1]; posArray[i3 + 2] += velArray[i3 + 2];
+                }
+                particlesGeometry.attributes.position.needsUpdate = true;
+                
+                // --- Black Hole Accretion Disk Animation ---
+                const diskPosArray = diskGeometry.attributes.position.array;
+                for (let i = 0; i < diskParticleCount; i++) {
+                    const data = diskData[i];
+                    data.angle += data.speed;
+                    data.radius -= 0.005; // Pull particles inward
+
+                    if (data.radius < minRadius) {
+                        data.radius = maxRadius;
+                    }
+
+                    const i3 = i * 3;
+                    diskPosArray[i3] = Math.cos(data.angle) * data.radius;
+                    diskPosArray[i3+2] = Math.sin(data.angle) * data.radius;
+                }
+                diskGeometry.attributes.position.needsUpdate = true;
+                blackHoleGroup.rotation.x = 0.8; // Tilt the black hole
+                blackHoleGroup.rotation.y += 0.001;
+                
+                // --- Ship Movement ---
+                const matrix = new THREE.Matrix4();
+                for (let i = 0; i < shipCount; i++) {
+                    const mesh = i < shipCount / 2 ? fighters : battleships;
+                    const instanceId = i < shipCount / 2 ? i : i - (shipCount / 2);
+                    mesh.getMatrixAt(instanceId, matrix);
+                    dummy.matrix.copy(matrix);
+                    dummy.position.add(shipVelocities[i]);
+                    if (dummy.position.x > worldBounds) dummy.position.x = -worldBounds;
+                    if (dummy.position.x < -worldBounds) dummy.position.x = worldBounds;
+                    if (dummy.position.y > worldBounds) dummy.position.y = -worldBounds;
+                    if (dummy.position.y < -worldBounds) dummy.position.y = worldBounds;
+                    if (dummy.position.z > worldBounds) dummy.position.z = -worldBounds;
+                    if (dummy.position.z < -worldBounds) dummy.position.z = worldBounds;
+                    dummy.updateMatrix();
+                    mesh.setMatrixAt(instanceId, dummy.matrix);
+                }
+                fighters.instanceMatrix.needsUpdate = true;
+                battleships.instanceMatrix.needsUpdate = true;
+
+                // --- Camera and Render ---
+                camera.position.x = Math.sin(clock.getElapsedTime() * 0.05) * 5;
+                camera.position.y = Math.cos(clock.getElapsedTime() * 0.05) * 5;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }, false);
+        };
+    </script>
+</body>
+</html>
