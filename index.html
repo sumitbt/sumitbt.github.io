@@ -106,11 +106,42 @@
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
-            camera.position.z = 50;
+            // camera.position.z = 50; // Removed for new initial camera setup
+
+            // --- Randomized Initial Camera Setup ---
+            const initialCameraDistance = eventHorizonRadius * 1.05;
+            const randomDirection = new THREE.Vector3(
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1
+            ).normalize();
+
+            // Ensure the random direction is not zero vector, unlikely but good practice
+            if (randomDirection.lengthSq() === 0) {
+                randomDirection.set(0,0,1); // Default to looking along z-axis
+            }
+
+            camera.position.copy(randomDirection.multiplyScalar(initialCameraDistance));
+
+            const lookAtOffsetFactor = eventHorizonRadius * 0.2;
+            const lookAtPoint = new THREE.Vector3(
+                (Math.random() - 0.5) * lookAtOffsetFactor,
+                (Math.random() - 0.5) * lookAtOffsetFactor,
+                (Math.random() - 0.5) * lookAtOffsetFactor
+            );
+            // The lookAtPoint is relative to the black hole's center, which is initially (0,0,0)
+            // If blackHoleGroup.position could be different at this stage, adjust lookAtPoint accordingly.
+            // Assuming blackHoleGroup is at (0,0,0) here.
+            camera.lookAt(lookAtPoint);
+
+            // Store this initial lookAtPoint if you intend for the camera to statically look at it,
+            // otherwise, if camera.lookAt(blackHoleGroup.position) is used in animate(), this is just for the very first frame.
+            // Let's name it for potential use in animate if we want a static target initially.
+            const initialLookAtTarget = lookAtPoint.clone();
 
             // --- Constants ---
             const worldBounds = 100;
-            const eventHorizonRadius = 2;
+            const eventHorizonRadius = 25; // Changed from 2 to 25
 
             // --- Starfield Particle System Setup ---
             const particleCount = 10000;
@@ -135,15 +166,17 @@
             const blackHoleMesh = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             blackHoleGroup.add(blackHoleMesh);
 
-            const diskParticleCount = 2000; const diskPositions = new Float32Array(diskParticleCount * 3); const diskData = [];
-            const maxRadius = 10; const minRadius = 2.5;
+            const diskParticleCount = 4000; // Changed from 2000
+            const diskPositions = new Float32Array(diskParticleCount * 3); const diskData = [];
+            const minRadius = eventHorizonRadius * 1.1; // Approx 27.5
+            const maxRadius = eventHorizonRadius * 4;   // Approx 100
             for (let i = 0; i < diskParticleCount; i++) {
                 const radius = Math.random() * (maxRadius - minRadius) + minRadius; const angle = Math.random() * Math.PI * 2; const i3 = i * 3;
                 diskPositions[i3] = Math.cos(angle) * radius; diskPositions[i3+1] = (Math.random() - 0.5) * 0.5; diskPositions[i3+2] = Math.sin(angle) * radius;
                 diskData.push({ angle, radius, speed: (0.5 / radius) * 0.1 + 0.005 });
             }
             const diskGeometry = new THREE.BufferGeometry(); diskGeometry.setAttribute('position', new THREE.BufferAttribute(diskPositions, 3));
-            const diskMaterial = new THREE.PointsMaterial({ color: 0xffa500, size: 0.08, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.7 });
+            const diskMaterial = new THREE.PointsMaterial({ color: 0xffa500, size: 0.15, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.7 }); // size changed from 0.08
             const accretionDisk = new THREE.Points(diskGeometry, diskMaterial);
             blackHoleGroup.add(accretionDisk);
 
@@ -174,7 +207,7 @@
             const bhCornerRot = new THREE.Euler(0.2, 0, 0);
             const bhTargetRot = new THREE.Euler().copy(bhInitialRot);
             const bhInitialScale = new THREE.Vector3(1, 1, 1);
-            const bhCornerScale = new THREE.Vector3(0.5, 0.5, 0.5);
+            const bhCornerScale = new THREE.Vector3(0.15, 0.15, 0.15); // Changed from 0.5, 0.5, 0.5
             const bhTargetScale = new THREE.Vector3(1, 1, 1);
             
             // --- UI Interaction ---
@@ -386,8 +419,11 @@
                 battleships.instanceMatrix.needsUpdate = true;
 
                 // --- Camera and Render ---
-                camera.position.x = Math.sin(clock.getElapsedTime() * 0.05) * 5; camera.position.y = Math.cos(clock.getElapsedTime() * 0.05) * 5;
-                camera.lookAt(scene.position); renderer.render(scene, camera);
+                // The old camera animation is removed for the new "on the black hole" initial view.
+                // The camera will now look at the blackHoleGroup's current position.
+                // This ensures that if the black hole moves (e.g., to the corner), the camera follows it.
+                camera.lookAt(blackHoleGroup.position);
+                renderer.render(scene, camera);
             }
             animate();
 
