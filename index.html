@@ -149,6 +149,9 @@
 
             // --- Spaceship Setup ---
             const shipCount = 100; const shipVelocities = []; 
+            const eventHorizonRadiusSq = eventHorizonRadius * eventHorizonRadius;
+            const shipGravityInfluenceRadiusSq = 900; // Ships are affected by gravity if dSq < 900
+            const shipRespawnMinDistSq = shipGravityInfluenceRadiusSq + 225; // Respawn ships outside this squared distance (30^2 + 15^2 buffer)
             const fighterGeometry = new THREE.ConeGeometry(0.1, 0.5, 4); const fighterMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
             const fighters = new THREE.InstancedMesh(fighterGeometry, fighterMaterial, shipCount / 2); scene.add(fighters);
             const battleshipGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.8); const battleshipMaterial = new THREE.MeshBasicMaterial({ color: 0x999999 });
@@ -289,34 +292,98 @@
                 
                 // --- Ship Movement & BH Gravity ---
                 const matrix = new THREE.Matrix4();
+                const currentShipPosition = new THREE.Vector3(); // Re-use this vector
+
                 for (let i = 0; i < shipCount; i++) {
-                    const mesh = i < shipCount / 2 ? fighters : battleships; const instanceId = i < shipCount / 2 ? i : i - (shipCount / 2);
-                    mesh.getMatrixAt(instanceId, matrix); dummy.matrix.copy(matrix);
+                    const mesh = i < shipCount / 2 ? fighters : battleships;
+                    const instanceId = i < shipCount / 2 ? i : i - (shipCount / 2);
+                    mesh.getMatrixAt(instanceId, matrix);
+                    dummy.matrix.copy(matrix); // Copy current matrix to dummy
                     
-                    // --- Black Hole Gravity on Ships ---
-                    const shipPosition = new THREE.Vector3().setFromMatrixPosition(dummy.matrix);
-                    const dirToBH = new THREE.Vector3().subVectors(blackHoleGroup.position, shipPosition);
+                    currentShipPosition.setFromMatrixPosition(dummy.matrix); // Get current world position
+
+                    const dirToBH = new THREE.Vector3().subVectors(blackHoleGroup.position, currentShipPosition);
                     const dSqBH = dirToBH.lengthSq();
-                    if(dSqBH < 900) { // Larger influence radius for ships
-                        const gravity = 20 / dSqBH;
-                        shipVelocities[i].x += dirToBH.x * gravity;
-                        shipVelocities[i].y += dirToBH.y * gravity;
-                        shipVelocities[i].z += dirToBH.z * gravity;
+
+                    // 1. Apply Gravity
+                    if (dSqBH < shipGravityInfluenceRadiusSq && dSqBH > 0.001) { // dSqBH > 0.001 to avoid issues if at exact center
+                        const effectiveDSqBH = Math.max(dSqBH, eventHorizonRadiusSq); // Force no stronger than at event horizon
+                        const gravityMagnitude = 20 / effectiveDSqBH; // Adjust 20 (the "mass" of BH) if needed
+
+                        dirToBH.normalize(); // We only want the direction
+                        shipVelocities[i].x += dirToBH.x * gravityMagnitude;
+                        shipVelocities[i].y += dirToBH.y * gravityMagnitude;
+                        shipVelocities[i].z += dirToBH.z * gravityMagnitude;
                     }
 
-                    dummy.position.add(shipVelocities[i]);
-                    
-                    if (dSqBH < eventHorizonRadius * eventHorizonRadius) {
-                        dummy.position.set( (Math.random() - 0.5) * worldBounds * 2, (Math.random() - 0.5) * worldBounds * 2, (Math.random() - 0.5) * worldBounds * 2 );
-                        shipVelocities[i].set((Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01);
-                    } else { // Wrap ships around the screen if not consumed
-                        if (dummy.position.x > worldBounds) dummy.position.x = -worldBounds; if (dummy.position.x < -worldBounds) dummy.position.x = worldBounds;
-                        if (dummy.position.y > worldBounds) dummy.position.y = -worldBounds; if (dummy.position.y < -worldBounds) dummy.position.y = worldBounds;
-                        if (dummy.position.z > worldBounds) dummy.position.z = -worldBounds; if (dummy.position.z < -worldBounds) dummy.position.z = worldBounds;
+                    // 2. Apply Velocity Damping
+                    shipVelocities[i].multiplyScalar(0.985); // Tune damping factor (e.g., 0.98 to 0.995)
+
+                    // 3. Update Position based on velocity
+                    dummy.position.add(shipVelocities[i]); // Add current velocity to dummy's local position
+                    dummy.updateMatrix(); // Important: update matrix after changing position
+
+                    // 4. Check for Consumption by Black Hole (using updated position)
+                    currentShipPosition.setFromMatrixPosition(dummy.matrix); // Get new position after movement
+                    const finalDSqBH = currentShipPosition.distanceToSquared(blackHoleGroup.position);
+
+                    if (finalDSqBH < eventHorizonRadiusSq) {
+                        let newPos = new THREE.Vector3();
+                        let newDSqFromBH;
+                        let attempts = 0;
+                        const maxAttempts = 20; // Prevent potential infinite loop for finding respawn spot
+
+                        do {
+                            // Generate a random position within worldBounds, centered around origin for now
+                            const x = (Math.random() - 0.5) * worldBounds * 1.5; // Slightly wider spawn area
+                            const y = (Math.random() - 0.5) * worldBounds * 1.5;
+                            const z = (Math.random() - 0.5) * worldBounds * 1.5;
+                            newPos.set(x, y, z);
+
+                            // Check distance from the black hole's actual current center
+                            newDSqFromBH = newPos.distanceToSquared(blackHoleGroup.position);
+                            attempts++;
+                        } while (newDSqFromBH < shipRespawnMinDistSq && attempts < maxAttempts);
+
+                        dummy.position.copy(newPos); // Set the new position
+
+                        const initialSpeed = 0.05 + Math.random() * 0.05; // Base speed for respawned ships
+                        if (attempts >= maxAttempts && newDSqFromBH < shipRespawnMinDistSq) {
+                            // If still too close after max attempts (unlikely but a safeguard),
+                            // give it a nudge directly away from the black hole.
+                            const escapeVector = new THREE.Vector3().subVectors(newPos, blackHoleGroup.position).normalize();
+                            shipVelocities[i].copy(escapeVector).multiplyScalar(initialSpeed);
+                        } else {
+                            // Otherwise, assign a new random velocity
+                            shipVelocities[i].set(
+                                (Math.random() - 0.5),
+                                (Math.random() - 0.5),
+                                (Math.random() - 0.5)
+                            ).normalize().multiplyScalar(initialSpeed);
+                        }
+                        dummy.updateMatrix(); // Update matrix after position and velocity change
+                    } else {
+                        // 5. Wrap ships around the world bounds if not consumed
+                        // It's better to update dummy.position directly for wrapping and then update matrix
+                        let wrapped = false;
+                        if (dummy.position.x > worldBounds) { dummy.position.x = -worldBounds; wrapped = true; }
+                        else if (dummy.position.x < -worldBounds) { dummy.position.x = worldBounds; wrapped = true; }
+
+                        if (dummy.position.y > worldBounds) { dummy.position.y = -worldBounds; wrapped = true; }
+                        else if (dummy.position.y < -worldBounds) { dummy.position.y = worldBounds; wrapped = true; }
+
+                        if (dummy.position.z > worldBounds) { dummy.position.z = -worldBounds; wrapped = true; }
+                        else if (dummy.position.z < -worldBounds) { dummy.position.z = worldBounds; wrapped = true; }
+
+                        if(wrapped) {
+                            dummy.updateMatrix(); // Update matrix only if position wrapped
+                        }
                     }
-                    dummy.updateMatrix(); mesh.setMatrixAt(instanceId, dummy.matrix);
+                    // Ensure the instanced mesh is updated with the dummy's final matrix for this frame
+                    mesh.setMatrixAt(instanceId, dummy.matrix);
                 }
-                fighters.instanceMatrix.needsUpdate = true; battleships.instanceMatrix.needsUpdate = true;
+                fighters.instanceMatrix.needsUpdate = true; // Signal that instance matrices have changed
+                battleships.instanceMatrix.needsUpdate = true;
 
                 // --- Camera and Render ---
                 camera.position.x = Math.sin(clock.getElapsedTime() * 0.05) * 5; camera.position.y = Math.cos(clock.getElapsedTime() * 0.05) * 5;
