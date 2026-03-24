@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experience — Sumit B. Tamgale</title>
+  <meta name="description" content="Professional experience, education, and awards. Software Engineer at Google working on AI, security, and enterprise intelligence systems.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header style="background-color: #fafafa; border-bottom: 1px solid #f0f0f0;">
+    <nav style="max-width: 720px; margin: 0 auto; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+      <a href="index.html" style="text-decoration: none; color: #1a1a2e; font-weight: 600; font-size: 0.9375rem; letter-spacing: -0.01em;">
+        Sumit B. Tamgale
+      </a>
+      <div class="desktop-nav" style="display: flex; align-items: center; gap: 2rem;">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="experience.html" class="nav-link active">Experience</a>
+        <a href="connect.html" class="nav-link">Connect</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+      </div>
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 4px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="mobile-menu" style="max-width: 720px; margin: 0 auto; padding: 0 1.5rem 1rem;">
+      <a href="index.html">Home</a>
+      <a href="experience.html" class="active">Experience</a>
+      <a href="connect.html">Connect</a>
+      <a href="blog.html">Blog</a>
+    </div>
+  </header>
+
+  <main style="max-width: 720px; margin: 0 auto; padding: 0 1.5rem;">
+
+    <!-- Page Title -->
+    <section style="padding: 4rem 0 3rem;">
+      <div class="accent-line" style="margin-bottom: 1.5rem;"></div>
+      <h1 style="font-size: 2rem; font-weight: 700; color: #1a1a2e; margin: 0 0 0.5rem;">Experience</h1>
+      <p style="font-size: 0.9375rem; color: #94a3b8; margin: 0; max-width: 520px; line-height: 1.6;">Since 2023, I've been deploying production AI systems that leverage large language models — from security operations to personal intelligence in Workspace.</p>
+    </section>
+
+    <!-- Google -->
+    <section style="padding-bottom: 3rem;" class="fade-in">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+        <h2 style="font-size: 1.125rem; font-weight: 600; color: #1a1a2e; margin: 0;">Google <span style="font-weight: 400; color: #94a3b8; font-size: 0.8125rem;">&middot; Sunnyvale, CA</span></h2>
+        <span style="font-size: 0.8125rem; color: #94a3b8;">Dec 2021 — Present</span>
+      </div>
+
+      <div class="timeline">
+        <!-- Workspace Intelligence -->
+        <div class="timeline-entry">
+          <div class="timeline-dot"></div>
+          <div style="margin-bottom: 0.25rem; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem;">
+            <h3 style="font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; margin: 0;">Workspace Intelligence</h3>
+            <span style="font-size: 0.75rem; color: #94a3b8; white-space: nowrap;">Sept 2024 — Present</span>
+          </div>
+          <ul style="margin: 0.75rem 0 0; padding-left: 1.125rem; color: #64748b; font-size: 0.8125rem; line-height: 1.7;">
+            <li style="margin-bottom: 0.375rem;">Drove the workspace apps integration in Gemini by building a novel query understanding and planning service using fine-tuned language models for RAG across Gmail, Drive, and Calendar.</li>
+            <li style="margin-bottom: 0.375rem;">This foundational work enables Gemini to deliver responses grounded in personal user context, powering the agentic features in the main app and Workspace sidekick.</li>
+            <li style="margin-bottom: 0.375rem;">Optimized retrieval and ranking by developing novel techniques for processing ambiguous natural language.</li>
+            <li style="margin-bottom: 0.375rem;">Led quality and latency hillclimbing efforts spanning multiple months to improve system performance for key clients.</li>
+            <li style="margin-bottom: 0.375rem;">Prototyped encoder-decoder model architecture for query understanding to optimize decode latency.</li>
+            <li>Established the context agent within a broader agent ecosystem, enriching system context to better serve end-users.</li>
+          </ul>
+        </div>
+
+        <!-- Gemini in SecOps -->
+        <div class="timeline-entry">
+          <div class="timeline-dot"></div>
+          <div style="margin-bottom: 0.25rem; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem;">
+            <h3 style="font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; margin: 0;">Gemini in SecOps</h3>
+            <span style="font-size: 0.75rem; color: #94a3b8; white-space: nowrap;">Jul 2023 — Sept 2024</span>
+          </div>
+          <ul style="margin: 0.75rem 0 0; padding-left: 1.125rem; color: #64748b; font-size: 0.8125rem; line-height: 1.7;">
+            <li style="margin-bottom: 0.375rem;">As a founding engineer, pioneered the Gemini integration in SecOps, owning end-to-end development of the core intent recognition and orchestration system.</li>
+            <li>Prototyped a novel agentic architecture for complex task orchestration using reasoning, tool-use, and memory, predating the emergence of currently established agentic frameworks.</li>
+          </ul>
+        </div>
+
+        <!-- Threat Detection -->
+        <div class="timeline-entry">
+          <div class="timeline-dot"></div>
+          <div style="margin-bottom: 0.25rem; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem;">
+            <h3 style="font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; margin: 0;">Threat Detection in SecOps</h3>
+            <span style="font-size: 0.75rem; color: #94a3b8; white-space: nowrap;">Dec 2021 — Jun 2023</span>
+          </div>
+          <ul style="margin: 0.75rem 0 0; padding-left: 1.125rem; color: #64748b; font-size: 0.8125rem; line-height: 1.7;">
+            <li>Engineered the platform for security researchers to develop and launch a large-scale library of threat detection rules. This foundational work on threat detection pipelines was a direct precursor to developing more advanced, AI-driven threat intelligence.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- BCBSA -->
+    <section style="padding-bottom: 3rem;" class="fade-in">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+        <h2 style="font-size: 1.125rem; font-weight: 600; color: #1a1a2e; margin: 0;">Blue Cross Blue Shield Association <span style="font-weight: 400; color: #94a3b8; font-size: 0.8125rem;">&middot; Chicago, IL</span></h2>
+        <span style="font-size: 0.8125rem; color: #94a3b8;">Jun 2019 — Dec 2021</span>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-entry">
+          <div class="timeline-dot"></div>
+          <h3 style="font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; margin: 0 0 0.25rem;">Intern &rarr; Programmer &rarr; Software Engineer</h3>
+          <ul style="margin: 0.75rem 0 0; padding-left: 1.125rem; color: #64748b; font-size: 0.8125rem; line-height: 1.7;">
+            <li style="margin-bottom: 0.375rem;">Engineered significant performance optimizations across data pipelines, reducing processing times by up to 85% using parallel aggregation and caching.</li>
+            <li>Improved system reliability and development efficiency by automating regression testing, enhancing data accuracy protocols, and implementing critical security measures.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Education -->
+    <section style="padding-bottom: 3rem;" class="fade-in">
+      <h2 style="font-size: 1.125rem; font-weight: 600; color: #1a1a2e; margin: 0 0 1.5rem;">Education</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+        <div class="card">
+          <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin: 0 0 0.5rem; font-weight: 500;">2021</p>
+          <p style="font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; margin: 0 0 0.25rem;">Master of Computer Science</p>
+          <p style="font-size: 0.8125rem; color: #64748b; margin: 0 0 0.75rem;">Illinois Institute of Technology, Chicago, IL</p>
+          <p style="font-size: 0.75rem; color: #94a3b8; margin: 0; line-height: 1.6;">Advanced Algorithms, Machine Learning, Computer Vision, Geospatial Vision, Cloud Computing, Software Architectures, Advanced Databases</p>
+        </div>
+        <div class="card">
+          <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin: 0 0 0.5rem; font-weight: 500;">2018</p>
+          <p style="font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; margin: 0 0 0.25rem;">Bachelor of Technology, Computer Science</p>
+          <p style="font-size: 0.8125rem; color: #64748b; margin: 0 0 0.75rem;">SGGS Institute of Engineering and Technology, Nanded, India</p>
+          <p style="font-size: 0.75rem; color: #94a3b8; margin: 0; line-height: 1.6;">Data Structures, Algorithms, Probability, Statistics, Machine Learning, Neural Networks, Distributed Computing, Cryptography</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Awards -->
+    <section style="padding-bottom: 5rem;" class="fade-in">
+      <h2 style="font-size: 1.125rem; font-weight: 600; color: #1a1a2e; margin: 0 0 1.5rem;">Honors &amp; Awards</h2>
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e1; margin-top: 7px; flex-shrink: 0;"></div>
+          <div>
+            <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.125rem;">Best Paper Award</p>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0;">IEEE International Conference on Computational Intelligence and Computing Research — <a href="https://ieeexplore.ieee.org/document/8524167" target="_blank" rel="noopener noreferrer" style="color: #4b5563; text-decoration: underline; text-decoration-color: #cbd5e1; text-underline-offset: 2px;">Application of Deep Convolutional Neural Network to Prevent ATM Fraud by Facial Disguise Identification</a></p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e1; margin-top: 7px; flex-shrink: 0;"></div>
+          <div>
+            <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.125rem;">Winner — Smart India Hackathon 2017</p>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0;">Ministry of Science and Technology, Government of India</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e1; margin-top: 7px; flex-shrink: 0;"></div>
+          <div>
+            <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.125rem;">Winner — C Brain, Inter-College Programming Competition</p>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0;">2017 &amp; 2018</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e1; margin-top: 7px; flex-shrink: 0;"></div>
+          <div>
+            <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.125rem;">Runner Up — Code-em-gamble, Intra-College Programming Competition</p>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0;">2016</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Skills -->
+    <section style="padding-bottom: 5rem;" class="fade-in">
+      <h2 style="font-size: 1.125rem; font-weight: 600; color: #1a1a2e; margin: 0 0 1.5rem;">Key Expertise</h2>
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.25rem;">LLM Application &amp; Fine-Tuning</p>
+          <p style="font-size: 0.8125rem; color: #64748b; margin: 0; line-height: 1.7;">Applied LLMs in security, building foundational systems. Advanced to fine-tuning Gemini for large-scale applications, incorporating personal context, custom domain knowledge, and evaluations.</p>
+        </div>
+        <div>
+          <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.25rem;">Agentic AI Systems</p>
+          <p style="font-size: 0.8125rem; color: #64748b; margin: 0; line-height: 1.7;">Designed agentic systems, prototyping a novel architecture for complex task orchestration in SecOps. Currently building agentic, personalized AI experiences at the intersection of Gemini and Workspace.</p>
+        </div>
+        <div>
+          <p style="font-size: 0.9375rem; font-weight: 500; color: #1a1a2e; margin: 0 0 0.25rem;">AI Product Development</p>
+          <p style="font-size: 0.8125rem; color: #64748b; margin: 0; line-height: 1.7;">End-to-end experience shipping AI-powered features, from concept and system design to evaluations and full production deployment. Owned the entire lifecycle of core AI components for products like Google SecOps and Gemini.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid #f0f0f0;">
+    <div style="max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.8125rem; color: #94a3b8;">
+      <p style="margin: 0;">&copy; 2025 Sumit B. Tamgale</p>
+      <div style="display: flex; gap: 1.5rem;">
+        <a href="mailto:sumittamgale@gmail.com">Email</a>
+        <a href="https://linkedin.com/in/sumitbt" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/sumitbt" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
